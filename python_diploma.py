@@ -17,7 +17,7 @@ auth_data = {
 
 # print('?'.join((AUTH_URL, urlencode(auth_data))))
 
-TOKEN = 'c61e614f574a38a3cca91799c62c739cddc468cbb59919ae0239ce7c0508cb5ece80969b6f5674c7d4909'
+TOKEN = '958bd3974dd9acfce97a36e3d359e4605bafdaab11302720ee8411adbce241273168395bf694b87af0060'
 NETOLOGY_TOKEN = '7b23e40ad10e08d3b7a8ec0956f2c57910c455e886b480b7d9fb59859870658c4a0b8fdc4dd 494db19099'
 
 USER_ID = "georgerailz"
@@ -35,7 +35,8 @@ def friends_list(user_id):
     params = {
         'access_token': TOKEN,
         'v': '5.74',
-        'user_id': user_id
+        'user_id': user_id,
+        'count': 40
     }
     response = requests.get('https://api.vk.com/method/friends.get', params).json()['response']['items']
     return response
@@ -44,7 +45,8 @@ def groups_list(user_id):
     params = {
         'access_token': TOKEN,
         'v': '5.74',
-        'user_id': user_id
+        'user_id': user_id,
+        'count': 40
     }
     response = set(requests.get('https://api.vk.com/method/groups.get', params).json()['response']['items'])
     return response
@@ -64,13 +66,15 @@ product = groups_list(find_user(USER_ID))
 for set in group_set:
     product = product - set
 
+print(product)
+
 def show_publics(public_id):
     params = {
         'access_token': TOKEN,
         'v': '5.74',
         'group_id': public_id,
     }
-    publics = requests.get('https://api.vk.com/method/groups.getById', params).json()['response']
+    publics = requests.get('https://api.vk.com/method/groups.getById', params).json()
     return publics
 
 def num_members(public_id):
@@ -79,24 +83,25 @@ def num_members(public_id):
         'v': '5.74',
         'group_id': public_id,
     }
-    publics = requests.get('https://api.vk.com/method/groups.getMembers', params).json()['response']
+    publics = requests.get('https://api.vk.com/method/groups.getMembers', params).json()
     return publics
 
-final_list = []
+publics = []
 for i in product:
-    id = show_publics(i)[0]['id']
-    name = show_publics(i)[0]['name']
-    count = num_members(i)['count']
-    # final_dict = {
-    #     'id': id,
-    #     'name': name,
-    #     'count': count
-    # }
-    # final_list.append(final_dict)
-    print('ID: ', id)
-    print('Name: ', name)
-    print('Count: ', count)
-    print('--------------')
-    time.sleep(2)
-#
-# print(final_dict)
+    id = show_publics(i)
+    name = show_publics(i)
+    count = num_members(i)
+
+    public_dict = {
+        'id': id['response'][0]['id'],
+        'name': name['response'][0]['name'],
+        'count': count['response']['count']
+    }
+
+    public_dict = json.dumps(public_dict, ensure_ascii=False)
+    public_dict = json.loads(public_dict)
+    print('-- thinking --')
+    publics.append(public_dict)
+    time.sleep(1)
+
+pprint(publics)
