@@ -35,8 +35,7 @@ def friends_list(user_id):
     params = {
         'access_token': TOKEN,
         'v': '5.74',
-        'user_id': user_id,
-        'count': 40
+        'user_id': user_id
     }
     response = requests.get('https://api.vk.com/method/friends.get', params).json()['response']['items']
     return response
@@ -45,8 +44,7 @@ def groups_list(user_id):
     params = {
         'access_token': TOKEN,
         'v': '5.74',
-        'user_id': user_id,
-        'count': 40
+        'user_id': user_id
     }
     response = set(requests.get('https://api.vk.com/method/groups.get', params).json()['response']['items'])
     return response

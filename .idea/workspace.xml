@@ -23,8 +23,8 @@
       <file leaf-file-name="python_diploma.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/python_diploma.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
-              <caret line="92" column="26" lean-forward="true" selection-start-line="92" selection-start-column="26" selection-end-line="92" selection-end-column="26" />
+            <state relative-caret-position="245">
+              <caret line="46" column="26" lean-forward="false" selection-start-line="46" selection-start-column="26" selection-end-line="46" selection-end-column="26" />
               <folding>
                 <element signature="e#0#34#0" expanded="true" />
               </folding>
@@ -224,6 +224,14 @@
       <option name="presentableId" value="Default" />
       <updated>1524073892314</updated>
     </task>
+    <task id="LOCAL-00001" summary="first look">
+      <created>1524307420268</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1524307420268</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -257,6 +265,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="first look" />
+    <option name="LAST_COMMIT_MESSAGE" value="first look" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -334,8 +346,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/python_diploma.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="92" column="26" lean-forward="true" selection-start-line="92" selection-start-column="26" selection-end-line="92" selection-end-column="26" />
+        <state relative-caret-position="245">
+          <caret line="46" column="26" lean-forward="false" selection-start-line="46" selection-start-column="26" selection-end-line="46" selection-end-column="26" />
           <folding>
             <element signature="e#0#34#0" expanded="true" />
           </folding>
