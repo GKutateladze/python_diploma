@@ -15,10 +15,10 @@ auth_data = {
     'v': '5.74'
 }
 
-# print('?'.join((AUTH_URL, urlencode(auth_data))))
+print('?'.join((AUTH_URL, urlencode(auth_data))))
 
-TOKEN = '958bd3974dd9acfce97a36e3d359e4605bafdaab11302720ee8411adbce241273168395bf694b87af0060'
-NETOLOGY_TOKEN = '7b23e40ad10e08d3b7a8ec0956f2c57910c455e886b480b7d9fb59859870658c4a0b8fdc4dd 494db19099'
+TOKEN = '5e223e07575939c4afb7c7c7d9d3b06ea74f91956cf5606c9189f568cbfa61cacce1719ae2c0b3f733660'
+NETOLOGYTOKEN = '7b23e40ad10e08d3b7a8ec0956f2c57910c455e886b480b7d9fb59859870658c4a0b8fdc4dd 494db19099'
 
 USER_ID = "georgerailz"
 
@@ -71,29 +71,21 @@ def show_publics(public_id):
         'access_token': TOKEN,
         'v': '5.74',
         'group_id': public_id,
+        'fields': 'members_count'
     }
     publics = requests.get('https://api.vk.com/method/groups.getById', params).json()
-    return publics
-
-def num_members(public_id):
-    params = {
-        'access_token': TOKEN,
-        'v': '5.74',
-        'group_id': public_id,
-    }
-    publics = requests.get('https://api.vk.com/method/groups.getMembers', params).json()
     return publics
 
 publics = []
 for i in product:
     id = show_publics(i)
     name = show_publics(i)
-    count = num_members(i)
+    count = show_publics(i)
 
     public_dict = {
         'id': id['response'][0]['id'],
         'name': name['response'][0]['name'],
-        'count': count['response']['count']
+        'count': count['response'][0]['members_count']
     }
 
     public_dict = json.dumps(public_dict, ensure_ascii=False)
