@@ -1,11 +1,9 @@
-from urllib.parse import urlencode
 import requests
 from pprint import pprint
 import time
 import json
 
 TOKEN = '7b23e40ad10e08d3b7a8ec0956f2c57910c455e886b480b7d9fb59859870658c4a0b8fdc4dd494db19099'
-id = 'georgerailz'
 
 def make_request(method, **kwargs,):
     params = {
@@ -34,24 +32,9 @@ def get_friends(id_or_screen_name):
     friends = make_request('friends.get', user_id=id_or_screen_name)
     return friends.json()
 
-    # try:
-    #     friends_dict = friends.json()['response']
-    #     return set(friends_dict['items'])
-    # except KeyError:
-    #     error = friends.json()['error']
-    #     print(f'Ошибка № {error["error_code"]} {error["error_msg"]}')
-
 def get_groups(id_or_screen_name):
     groups = make_request('groups.get', user_id=id_or_screen_name)
     return groups.json()
-
-    # try:
-    #     groups_dict = groups.json()['response']
-    #     return set(groups_dict['items'])
-    # except KeyError:
-    #     error = groups.json()['error']
-    #     print(f'Ошибка № {error["error_code"]} {error["error_msg"]}')
-    #     get_groups(id_or_screen_name)
 
 def get_friend_groups(user_id):
     publics = set()
@@ -72,7 +55,29 @@ def get_friend_groups(user_id):
     only_groups = set(user_groups) - publics
     return only_groups
 
-print(get_friend_groups(id))
+def show_publics(user_id):
+    only_groups = get_friend_groups(user_id)
+    group_list = []
+    for group in only_groups:
+        try:
+            only_group_json = make_request('groups.getById', group_id=group, fields='members_count').json()['response'][0]
+            time.sleep(0.35)
+
+            group_list.append({
+                'name': only_group_json['name'],
+                'gid': only_group_json['id'],
+                'members_count': only_group_json['members_count']
+            })
+            print('-*- loading -*- creating groups.json -*-')
+        except:
+            print('Oops, error occured')
+
+    with open('groups.json', 'w', encoding='utf8') as f:
+        data = json.dump(group_list, f, ensure_ascii=False, indent=2)
+        return data
+
+id = 'tim_leary'
+print(show_publics(id))
 
 
 
