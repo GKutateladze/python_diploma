@@ -4,94 +4,75 @@ from pprint import pprint
 import time
 import json
 
-APP_ID = 6453204
-AUTH_URL = 'https://oauth.vk.com/authorize'
+TOKEN = '7b23e40ad10e08d3b7a8ec0956f2c57910c455e886b480b7d9fb59859870658c4a0b8fdc4dd494db19099'
+id = 'georgerailz'
 
-auth_data = {
-    'client_id': APP_ID,
-    'display': 'mobile',
-    'scope': 'friends,groups,status',
-    'response_type': 'token',
-    'v': '5.74'
-}
-
-print('?'.join((AUTH_URL, urlencode(auth_data))))
-
-TOKEN = '5e223e07575939c4afb7c7c7d9d3b06ea74f91956cf5606c9189f568cbfa61cacce1719ae2c0b3f733660'
-NETOLOGYTOKEN = '7b23e40ad10e08d3b7a8ec0956f2c57910c455e886b480b7d9fb59859870658c4a0b8fdc4dd 494db19099'
-
-USER_ID = "georgerailz"
-
-def find_user(id_or_screen_name):
+def make_request(method, **kwargs,):
     params = {
         'access_token': TOKEN,
-        'v': '5.74',
-        'user_ids': id_or_screen_name
+        'v': '5.74'
     }
-    user_id = requests.get('https://api.vk.com/method/users.get', params).json()['response'][0]['id']
-    return user_id
-
-def friends_list(user_id):
-    params = {
-        'access_token': TOKEN,
-        'v': '5.74',
-        'user_id': user_id
-    }
-    response = requests.get('https://api.vk.com/method/friends.get', params).json()['response']['items']
+    params = {**params, **kwargs}
+    response = requests.get(f'https://api.vk.com/method/{method}', params)
     return response
 
-def groups_list(user_id):
-    params = {
-        'access_token': TOKEN,
-        'v': '5.74',
-        'user_id': user_id
-    }
-    response = set(requests.get('https://api.vk.com/method/groups.get', params).json()['response']['items'])
-    return response
+    # if response.json()['response'] == True:
+    #     return response
+    # elif response.json()['error']==True and response.json()['error']['error_code']==18:
+    #     print('User was deleted or banned')
+    #     return
+    # elif response.json()['error']==True and response.json()['error']['error_code']==10:
+    #     time.sleep(1)
+    #     return response
 
-group_set = []
-for friend in enumerate(friends_list(find_user(USER_ID))):
-    try:
-        grp = groups_list(find_user(friend))
-        time.sleep(1)
-        group_set.append(grp)
-        print(friend, grp)
-    except:
-        print(' --- ACOUNT HAS BEEN BLOCKED OR DELETED BY THE USER --- ')
-print('FINISHED')
 
-product = groups_list(find_user(USER_ID))
-for set in group_set:
-    product = product - set
+def get_user(id_or_screen_name):
+    user_id = make_request('users.get', user_ids=id_or_screen_name)
+    return user_id.json()['response'][0]['id']
 
-print(product)
+def get_friends(id_or_screen_name):
+    friends = make_request('friends.get', user_id=id_or_screen_name)
+    return friends.json()
 
-def show_publics(public_id):
-    params = {
-        'access_token': TOKEN,
-        'v': '5.74',
-        'group_id': public_id,
-        'fields': 'members_count'
-    }
-    publics = requests.get('https://api.vk.com/method/groups.getById', params).json()
-    return publics
+    # try:
+    #     friends_dict = friends.json()['response']
+    #     return set(friends_dict['items'])
+    # except KeyError:
+    #     error = friends.json()['error']
+    #     print(f'Ошибка № {error["error_code"]} {error["error_msg"]}')
 
-publics = []
-for i in product:
-    id = show_publics(i)
-    name = show_publics(i)
-    count = show_publics(i)
+def get_groups(id_or_screen_name):
+    groups = make_request('groups.get', user_id=id_or_screen_name)
+    return groups.json()
 
-    public_dict = {
-        'id': id['response'][0]['id'],
-        'name': name['response'][0]['name'],
-        'count': count['response'][0]['members_count']
-    }
+    # try:
+    #     groups_dict = groups.json()['response']
+    #     return set(groups_dict['items'])
+    # except KeyError:
+    #     error = groups.json()['error']
+    #     print(f'Ошибка № {error["error_code"]} {error["error_msg"]}')
+    #     get_groups(id_or_screen_name)
 
-    public_dict = json.dumps(public_dict, ensure_ascii=False)
-    public_dict = json.loads(public_dict)
-    print('-- thinking --')
-    publics.append(public_dict)
+def get_friend_groups(user_id):
+    publics = set()
+    user_id = get_user(user_id)
+    user_friends = get_friends(user_id)['response']['items']
+    user_groups = get_groups(user_id)['response']['items']
     time.sleep(1)
 
-pprint(publics)
+    for i, friend in enumerate(user_friends):
+        try:
+            friend_groups = get_groups(friend)['response']['items']
+            publics.update(friend_groups)
+            print(i, f'vk.com/id{friend}', friend_groups)
+            time.sleep(0.35)
+        except KeyError:
+            print(i, f'vk.com/id{friend} User was banned or deleted')
+
+    only_groups = set(user_groups) - publics
+    return only_groups
+
+print(get_friend_groups(id))
+
+
+
