@@ -1,9 +1,9 @@
 import requests
-from pprint import pprint
 import time
 import json
 
-TOKEN = '7b23e40ad10e08d3b7a8ec0956f2c57910c455e886b480b7d9fb59859870658c4a0b8fdc4dd494db19099'
+with open('vk_token') as f:
+    TOKEN = f.readline()
 
 def make_request(method, **kwargs,):
     params = {
@@ -78,6 +78,3 @@ def show_publics(user_id):
 
 id = 'tim_leary'
 print(show_publics(id))
-
-
-
