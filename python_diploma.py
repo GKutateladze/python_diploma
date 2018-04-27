@@ -62,8 +62,8 @@ def get_friend_groups(user_id):
 def show_publics(user_id):
     only_groups = get_friend_groups(user_id)
     group_list = []
+    
     for group in only_groups:
-
         only_group_json = make_request('groups.getById', group_id=group, fields='members_count')['response'][0]
         group_list.append({
             'name': only_group_json['name'],
