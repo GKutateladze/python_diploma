@@ -62,11 +62,11 @@ def get_friend_groups(user_id):
             print(i, f'vk.com/id{friend}', friend_groups)
         else:
             publics.update(friend_groups['items'])
-            print(i, f'vk.com/id{friend}', friend_groups)
+            print(i, f'vk.com/id{friend}', friend_groups['items'])
 
         # try:
-        #     publics.update(friend_groups['response']['items'])
-        #     print(i, f'vk.com/id{friend}', friend_groups['response']['items'])
+        #     publics.update(friend_groups['items'])
+        #     print(i, f'vk.com/id{friend}', friend_groups['items'])
         # except TypeError:
         #     print(i, f'vk.com/id{friend}', friend_groups)
 
