@@ -2,8 +2,8 @@ import requests
 import time
 import json
 
-with open('vk_token') as f:
-    TOKEN = f.readline()
+
+TOKEN = ''
 
 
 def make_request(method, **kwargs, ):
@@ -12,26 +12,32 @@ def make_request(method, **kwargs, ):
         'v': '5.74'
     }
     params = {**params, **kwargs}
-    response = requests.get(f'https://api.vk.com/method/{method}', params).json()
 
-    for key in response.keys():
-        if key == 'response':
-            return response
-        elif key == 'error':
+    while True:
+        response = requests.get(f'https://api.vk.com/method/{method}', params).json()
+
+        TOO_MANY_REQUESTS = 6
+        USER_HAS_BEED_BANNED_OR_DELETED = 18
+        NO_PERMISSION_TO_PERFORM_THIS_ACTION = 7
+
+        if 'error' in response:
             error = response['error']
-            if error["error_code"] == 6:
-                time.sleep(2)
-                response = requests.get(f'https://api.vk.com/method/{method}', params).json()
-                return response
-            elif error["error_code"] == 7:
-                return error["error_msg"]
-            elif error["error_code"] == 18:
-                return error["error_msg"]
+            if error["error_code"] == TOO_MANY_REQUESTS:
+                time.sleep(0.2)
+                continue
+            elif error["error_code"] == NO_PERMISSION_TO_PERFORM_THIS_ACTION:
+                print(error["error_msg"])
+                return None
+            elif error["error_code"] == USER_HAS_BEED_BANNED_OR_DELETED:
+                print(error["error_msg"])
+                return None
+        else:
+            return response['response']
 
 
 def get_user(id_or_screen_name):
     user_id = make_request('users.get', user_ids=id_or_screen_name)
-    return user_id['response'][0]['id']
+    return user_id[0]['id']
 
 
 def get_friends(id_or_screen_name):
@@ -43,24 +49,28 @@ def get_groups(id_or_screen_name):
     groups = make_request('groups.get', user_id=id_or_screen_name)
     return groups
 
-
 def get_friend_groups(user_id):
     publics = set()
     user_id = get_user(user_id)
-    user_friends = get_friends(user_id)['response']['items']
-    user_groups = get_groups(user_id)['response']['items']
+    user_friends = get_friends(user_id)['items']
+    user_groups = set(get_groups(user_id)['items'])
 
     for i, friend in enumerate(user_friends):
         friend_groups = get_groups(friend)
 
-        try:
-            publics.update(friend_groups['response']['items'])
+        if friend_groups is None:
             print(i, f'vk.com/id{friend}', friend_groups)
-        except:
-            publics.update(friend_groups)
+        else:
+            publics.update(friend_groups['items'])
             print(i, f'vk.com/id{friend}', friend_groups)
 
-    only_groups = set(user_groups) - publics
+        # try:
+        #     publics.update(friend_groups['response']['items'])
+        #     print(i, f'vk.com/id{friend}', friend_groups['response']['items'])
+        # except TypeError:
+        #     print(i, f'vk.com/id{friend}', friend_groups)
+
+    only_groups = user_groups - publics
     return only_groups
 
 
@@ -69,7 +79,7 @@ def show_publics(user_id):
     group_list = []
 
     for group in only_groups:
-        only_group_json = make_request('groups.getById', group_id=group, fields='members_count')['response'][0]
+        only_group_json = make_request('groups.getById', group_id=group, fields='members_count')[0]
         group_list.append({
             'name': only_group_json['name'],
             'gid': only_group_json['id'],
