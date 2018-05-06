@@ -3,7 +3,11 @@ import time
 import json
 
 with open('vk_token') as f:
-    TOKEN = f.readlines()
+    TOKEN = f.read().strip()
+
+TOO_MANY_REQUESTS = 6
+USER_HAS_BEED_BANNED_OR_DELETED = 18
+NO_PERMISSION_TO_PERFORM_THIS_ACTION = 7
 
 def make_request(method, **kwargs):
     params = {
@@ -11,10 +15,6 @@ def make_request(method, **kwargs):
         'v': '5.74'
     }
     params = {**params, **kwargs}
-
-    TOO_MANY_REQUESTS = 6
-    USER_HAS_BEED_BANNED_OR_DELETED = 18
-    NO_PERMISSION_TO_PERFORM_THIS_ACTION = 7
 
     while True:
         response = requests.get(f'https://api.vk.com/method/{method}', params).json()
@@ -85,8 +85,8 @@ def show_publics(user_id):
         print('-*- loading -*- creating groups.json -*-')
 
     with open('groups.json', 'w', encoding='utf8') as f:
-        data = json.dump(group_list, f, ensure_ascii=False, indent=2)
-        return data
+        json.dump(group_list, f, ensure_ascii=False, indent=2)
+
 
 
 print(show_publics('tim_leary'))
