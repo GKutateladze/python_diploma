@@ -31,6 +31,9 @@ def make_request(method, **kwargs, ):
             elif error["error_code"] == USER_HAS_BEED_BANNED_OR_DELETED:
                 print(error["error_msg"])
                 return None
+            else:
+                print("Произошла неизвестная ошибка")
+                return None
         else:
             return response['response']
 
