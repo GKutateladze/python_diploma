@@ -2,23 +2,22 @@ import requests
 import time
 import json
 
+with open('vk_token') as f:
+    TOKEN = f.readlines()
 
-TOKEN = ''
-
-
-def make_request(method, **kwargs, ):
+def make_request(method, **kwargs):
     params = {
         'access_token': TOKEN,
         'v': '5.74'
     }
     params = {**params, **kwargs}
 
+    TOO_MANY_REQUESTS = 6
+    USER_HAS_BEED_BANNED_OR_DELETED = 18
+    NO_PERMISSION_TO_PERFORM_THIS_ACTION = 7
+
     while True:
         response = requests.get(f'https://api.vk.com/method/{method}', params).json()
-
-        TOO_MANY_REQUESTS = 6
-        USER_HAS_BEED_BANNED_OR_DELETED = 18
-        NO_PERMISSION_TO_PERFORM_THIS_ACTION = 7
 
         if 'error' in response:
             error = response['error']
@@ -66,12 +65,6 @@ def get_friend_groups(user_id):
         else:
             publics.update(friend_groups['items'])
             print(i, f'vk.com/id{friend}', friend_groups['items'])
-
-        # try:
-        #     publics.update(friend_groups['items'])
-        #     print(i, f'vk.com/id{friend}', friend_groups['items'])
-        # except TypeError:
-        #     print(i, f'vk.com/id{friend}', friend_groups)
 
     only_groups = user_groups - publics
     return only_groups
